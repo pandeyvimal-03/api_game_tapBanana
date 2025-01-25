@@ -7,11 +7,11 @@ export const login = async (body) => {
         const { email, password } = body
         const user = await User.findOne({ EMAIL: email })
         if (!user) {
-            throw new Error("Invalid Credential")
+            return Promise.reject("Invalid Credential")
         }
-
-        if (!verifyPass(user.PASSWORD, password)) {
-            throw new Error("Invalid Credential")
+        const isPasswordValid = await verifyPass(user.PASSWORD, password);
+        if (!isPasswordValid) {
+            return Promise.reject("Invalid Credential")
         }
         else {
             const token = createToken({ username: user.USERNAME, userRole: user.ROLE, userRoleId: user.ROLEID, id: user._id })
